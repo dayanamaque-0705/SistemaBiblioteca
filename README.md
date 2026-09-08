@@ -5,7 +5,7 @@ Este proyecto es una aplicación de consola desarrollada en C# (.NET 10) que sim
 
 ## Objetivos y Arquitectura Aplicada
 - Programación Orientada a Objetos (POO): modelado de entidades principales (`Libro`, `Usuario`, `Prestamo`) aplicando el principio de abstracción, encapsulamiento e implementación de interfaces (`IPrestable`).
-- Control de Excepciones: uso de un bloque `try/catch` global dentro del menú interactivo para capturar excepciones de negocio (`InvalidOperationException`, `KeyNotFoundException`) e informar al usuario sin detener el programa.
+- Control de Excepciones: uso de un bloque `try/catch` global dentro del menú interactivo para capturar excepciones de negocio e informar al usuario sin detener el programa.
 
 ## Requisitos Previos e Instalación
 
@@ -99,6 +99,3 @@ Nota:
 - `feature/libros`: módulo del catálogo y operaciones CRUD de libros.
 - `feature/usuarios`: módulo de administración de usuarios.
 - `feature/prestamos`: lógica de transacciones con record, interfaz interactiva en `Program.cs` y fusión final vía PR hacia `main`.
-
-## Notas Finales
-Este proyecto fue desarrollado como una práctica de gestión bibliotecaria con enfoque en programación orientada a objetos, validación de reglas de negocio y experiencia de usuario en consola.
