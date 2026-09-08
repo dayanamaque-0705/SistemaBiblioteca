@@ -1,111 +1,145 @@
 using System;
 using System.Collections.Generic;
 
-namespace SistemaBiblioteca{
-    public class Biblioteca{
+namespace SistemaBiblioteca
+{
+    public class Biblioteca
+    {
         private List<Libro> libros = new List<Libro>();
         private List<Usuario> usuarios = new List<Usuario>();
         private List<Prestamo> prestamos = new List<Prestamo>();
-        //metodos libros
-        public void RegistrarLibro(string titulo, string autor, string categoria, string codigo){
+//libros
+        public void RegistrarLibro(string titulo, string autor, string categoria, string codigo)
+        {
             bool existe = false;
-            foreach (var l in libros) {
-                if (l.Codigo == codigo) {
+            foreach (var l in libros) 
+            {
+                if (l.Codigo == codigo) 
+                {
                     existe = true;
                     break;
                 }
             }
 
-            if (existe) {
+            if (existe) 
+            {
                 throw new InvalidOperationException($"el libro con codigo '{codigo}' ya esta registrado");
             }
+
             Libro nuevoLibro = new Libro(titulo, autor, categoria, codigo, true);
             libros.Add(nuevoLibro);
         }
 
-        public IEnumerable<Libro> obtenerLibrosDisponibles(){
+        public IEnumerable<Libro> obtenerLibrosDisponibles()
+        {
             List<Libro> disponibles = new List<Libro>();
-            foreach (var lib in libros) {
-                if (lib.Disponible) {
+            foreach (var lib in libros) 
+            {
+                if (lib.Disponible) 
+                {
                     disponibles.Add(lib);
                 }
             }
             return disponibles;
         }
 
-        public IEnumerable<Libro> buscarLibros(string filtro){
+        public IEnumerable<Libro> buscarLibros(string filtro)
+        {
             List<Libro> resultado = new List<Libro>();
-            foreach (var lib in libros) {
+            foreach (var lib in libros) 
+            {
                 if (lib.Autor.Contains(filtro, StringComparison.OrdinalIgnoreCase) || 
-                    lib.Categoria.Contains(filtro, StringComparison.OrdinalIgnoreCase)) {
+                    lib.Categoria.Contains(filtro, StringComparison.OrdinalIgnoreCase)) 
+                {
                     resultado.Add(lib);
                 }
             }
             return resultado;
         }
 
-        public IEnumerable<Libro> OrdenarLibrosPorTitulo(){
+        public IEnumerable<Libro> OrdenarLibrosPorTitulo()
+        {
             List<Libro> listaOrdenada = new List<Libro>(libros);
             listaOrdenada.Sort((l1, l2) => string.Compare(l1.Titulo, l2.Titulo, StringComparison.OrdinalIgnoreCase));
             return listaOrdenada;
         }
 
-        public Libro BuscarLibroCodigo(string codigo){
-            Libro libroencontrado = null;
-            foreach (var lib in libros) {
-                if (lib.Codigo == codigo) {
+        public Libro BuscarLibroCodigo(string codigo)
+        {
+            // El '?' le indica al compilador que la variable acepta null de forma segura
+            Libro? libroencontrado = null;
+            foreach (var lib in libros) 
+            {
+                if (lib.Codigo == codigo) 
+                {
                     libroencontrado = lib;
                     break;
                 }
             }
 
-            if(libroencontrado == null){
+            if (libroencontrado == null)
+            {
                 throw new KeyNotFoundException($"el libro con codigo '{codigo}' no esta registrado");
             }
+
             return libroencontrado;
         }
 
-        public void EliminarLibro(string codigo){
+        public void EliminarLibro(string codigo)
+        {
             Libro libroEliminar = BuscarLibroCodigo(codigo);
             libros.Remove(libroEliminar);
         }
-
-        //metodos usuarios
-        public void RegistrarUsuario(string id, string nombre, string correo){
+        // usuarios
+        public void RegistrarUsuario(string id, string nombre, string correo)
+        {
             bool existe = false;
-            foreach (var usu in usuarios) {
-                if (usu.Id == id) {
+            foreach (var usu in usuarios) 
+            {
+                if (usu.Id == id) 
+                {
                     existe = true;
                     break;
                 }
             }
 
-            if (existe) {
+            if (existe) 
+            {
                 throw new InvalidOperationException($"el usuario con id '{id}' ya esta registrado");
             }
+
             Usuario nuevoUsuario = new Usuario(id, nombre, correo);
             usuarios.Add(nuevoUsuario);
         }
 
-        public IEnumerable<Usuario> ObtenerUsuarios(){
+        public IEnumerable<Usuario> ObtenerUsuarios()
+        {
             return usuarios;
         }
 
-        public Usuario BuscarUsuario(string id){
-            Usuario usuarioEncontrado = null;
-            foreach (var usu in usuarios) {
-                if (usu.Id == id) {
+        public Usuario BuscarUsuario(string id)
+        {
+            // El '?' permite asignar null sin que genere la advertencia CS8600
+            Usuario? usuarioEncontrado = null;
+            foreach (var usu in usuarios) 
+            {
+                if (usu.Id == id) 
+                {
                     usuarioEncontrado = usu;
                     break;
                 }
             }
 
-            if(usuarioEncontrado == null){
+            if (usuarioEncontrado == null)
+            {
                 throw new KeyNotFoundException($"el usuario con id '{id}' no esta registrado");
             }
+
             return usuarioEncontrado;
         }
-        ///prestamos
+
+        // ==========================================
+        // pretamos
         public void RegistrarPrestamo(string codigoLibro, string idUsuario)
         {
             Libro libro = BuscarLibroCodigo(codigoLibro);
@@ -118,7 +152,8 @@ namespace SistemaBiblioteca{
 
         public void RegistrarDevolucion(string codigoLibro)
         {
-            Prestamo prestamoActivo = null;
+            // El '?' remueve la advertencia del compilador de .NET 10
+            Prestamo? prestamoActivo = null;
             foreach (var p in prestamos)
             {
                 if (p.CodigoLibro == codigoLibro)
@@ -153,6 +188,5 @@ namespace SistemaBiblioteca{
             }
             return resultado;
         }
-       
     }
 }

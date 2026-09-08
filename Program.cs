@@ -10,53 +10,53 @@ while (!salir)
 {
     Console.Clear();
     Console.WriteLine("========================================");
-    Console.WriteLine("    SISTEMA DE GESTIÓN DE BIBLIOTECA    ");
+    Console.WriteLine("  Gestión de Biblioteca        ");
     Console.WriteLine("========================================");
-    Console.WriteLine("1. Registrar libro");
-    Console.WriteLine("2. Registrar usuario");
-    Console.WriteLine("3. Listar libros ordenados por título");
-    Console.WriteLine("4. Buscar libros por autor o categoría");
-    Console.WriteLine("5. Consultar libros disponibles");
-    Console.WriteLine("6. Registrar préstamo");
-    Console.WriteLine("7. Registrar devolución");
-    Console.WriteLine("8. Consultar préstamos activos");
-    Console.WriteLine("9. Eliminar libro");
-    Console.WriteLine("10. Salir");
+    Console.WriteLine("1. Registrar un nuevo libro");
+    Console.WriteLine("2. Registrar un nuevo usuario");
+    Console.WriteLine("3. Ver libros (ordenados por título)");
+    Console.WriteLine("4. Buscar libros (por autor o categoría)");
+    Console.WriteLine("5. Ver qué libros están disponibles");
+    Console.WriteLine("6. Realizar un préstamo");
+    Console.WriteLine("7. Registrar la devolución de un libro");
+    Console.WriteLine("8. Ver préstamos activos en este momento");
+    Console.WriteLine("9. Eliminar un libro");
+    Console.WriteLine("10. Salir del sistema");
     Console.WriteLine("========================================");
-    Console.Write("Seleccione una opción: ");
+    Console.Write("¿ingrese la opcion? (1-10): ");
 
-    string opcion = Console.ReadLine();
-    if (opcion == null)
-    {
-        opcion = "";
-    }
+    string opcion = Console.ReadLine() ?? "";
 
     try
     {
         switch (opcion)
         {
             case "1":
-                Console.Write("Título: ");
-                string titulo = Console.ReadLine();
-                Console.Write("Autor: ");
-                string autor = Console.ReadLine();
-                Console.Write("Categoría: ");
-                string categoria = Console.ReadLine();
-                Console.Write("Código único: ");
-                string codigo = Console.ReadLine();
+                Console.WriteLine("\n Agregar un nuevo libro ---");
+                Console.Write("¿Cuál es el título?: ");
+                string titulo = Console.ReadLine() ?? "";
+                Console.Write("¿Quién es el autor?: ");
+                string autor = Console.ReadLine() ?? "";
+                Console.Write("¿A qué categoría pertenece?: ");
+                string categoria = Console.ReadLine() ?? "";
+                Console.Write("Ingresa su código único: ");
+                string codigo = Console.ReadLine() ?? "";
+
                 biblioteca.RegistrarLibro(titulo, autor, categoria, codigo);
-                Console.WriteLine("\n[Éxito] Libro registrado correctamente.");
+                Console.WriteLine("\n El libro se guardó correctamente.");
                 break;
 
             case "2":
-                Console.Write("ID de usuario: ");
-                string id = Console.ReadLine();
-                Console.Write("Nombre: ");
-                string nombre = Console.ReadLine();
-                Console.Write("Correo: ");
-                string correo = Console.ReadLine();
+                Console.WriteLine("\n Registrar nuevo usuario ---");
+                Console.Write("Ingresa su número de ID: ");
+                string id = Console.ReadLine() ?? "";
+                Console.Write("Nombre completo: ");
+                string nombre = Console.ReadLine() ?? "";
+                Console.Write("Correo electrónico: ");
+                string correo = Console.ReadLine() ?? "";
+
                 biblioteca.RegistrarUsuario(id, nombre, correo);
-                Console.WriteLine("\n[Éxito] Usuario registrado correctamente.");
+                Console.WriteLine("\n¡Genial! El usuario ya quedó registrado.");
                 break;
 
             case "3":
@@ -65,33 +65,34 @@ while (!salir)
                 {
                     ordenados.Add(l);
                 }
-                Console.WriteLine("\n--- LIBROS ORDENADOS POR TÍTULO ---");
+                Console.WriteLine("\n Catálogo de libros ---");
                 if (ordenados.Count == 0)
                 {
-                    Console.WriteLine("No hay libros registrados.");
+                    Console.WriteLine("Aún no tenemos libros registrados en el catálogo.");
                 }
                 foreach (Libro l in ordenados)
                 {
-                    Console.WriteLine("- [" + l.Codigo + "] " + l.Titulo + " | Autor: " + l.Autor + " | Disponible: " + l.Disponible);
+                    string estado = l.Disponible ? "Disponible" : "Prestado";
+                    Console.WriteLine($"- [{l.Codigo}] \"{l.Titulo}\" de {l.Autor} | Estado: {estado}");
                 }
                 break;
 
             case "4":
-                Console.Write("Ingrese autor o categoría a buscar: ");
-                string filtro = Console.ReadLine();
+                Console.Write("\n¿Qué autor o categoría estás buscando?: ");
+                string filtro = Console.ReadLine() ?? "";
                 List<Libro> resultados = new List<Libro>();
                 foreach (Libro l in biblioteca.buscarLibros(filtro))
                 {
                     resultados.Add(l);
                 }
-                Console.WriteLine("\n--- RESULTADOS DE BÚSQUEDA ---");
+                Console.WriteLine($"\n Resultados para '{filtro}' ---");
                 if (resultados.Count == 0)
                 {
-                    Console.WriteLine("No se encontraron resultados.");
+                    Console.WriteLine("No encontramos ningún libro que coincida con tu búsqueda.");
                 }
                 foreach (Libro l in resultados)
                 {
-                    Console.WriteLine("- [" + l.Codigo + "] " + l.Titulo + " (" + l.Autor + ") - Categoría: " + l.Categoria);
+                    Console.WriteLine($"- [{l.Codigo}] \"{l.Titulo}\" ({l.Autor}) - Categoría: {l.Categoria}");
                 }
                 break;
 
@@ -101,31 +102,35 @@ while (!salir)
                 {
                     disponibles.Add(l);
                 }
-                Console.WriteLine("\n--- LIBROS DISPONIBLES ---");
+                Console.WriteLine("\n Libros listos para prestar ---");
                 if (disponibles.Count == 0)
                 {
-                    Console.WriteLine("No hay libros disponibles.");
+                    Console.WriteLine("En este momento no hay ningún libro disponible.");
                 }
                 foreach (Libro l in disponibles)
                 {
-                    Console.WriteLine("- [" + l.Codigo + "] " + l.Titulo);
+                    Console.WriteLine($"- [{l.Codigo}] {l.Titulo}");
                 }
                 break;
 
             case "6":
-                Console.Write("Código del libro: ");
-                string codLibro = Console.ReadLine();
-                Console.Write("ID del usuario: ");
-                string idUser = Console.ReadLine();
+                Console.WriteLine("\n Generar préstamo ---");
+                Console.Write("Código del libro a prestar: ");
+                string codLibro = Console.ReadLine() ?? "";
+                Console.Write("ID del usuario que lo solicita: ");
+                string idUser = Console.ReadLine() ?? "";
+
                 biblioteca.RegistrarPrestamo(codLibro, idUser);
-                Console.WriteLine("\n[Éxito] Préstamo registrado correctamente.");
+                Console.WriteLine("\n¡Perfecto! El préstamo fue registrado sin problemas.");
                 break;
 
             case "7":
-                Console.Write("Código del libro a devolver: ");
-                string codDev = Console.ReadLine();
+                Console.WriteLine("\n Devolución de libro ---");
+                Console.Write("Ingresa el código del libro que están devolviendo: ");
+                string codDev = Console.ReadLine() ?? "";
+
                 biblioteca.RegistrarDevolucion(codDev);
-                Console.WriteLine("\n[Éxito] Devolución registrada correctamente.");
+                Console.WriteLine("\n¡Excelente! Se ha registrado la devolución.");
                 break;
 
             case "8":
@@ -134,10 +139,10 @@ while (!salir)
                 {
                     activos.Add(p);
                 }
-                Console.WriteLine("\n--- PRÉSTAMOS ACTIVOS ---");
+                Console.WriteLine("\n Préstamos que están en curso ---");
                 if (activos.Count == 0)
                 {
-                    Console.WriteLine("No hay préstamos activos.");
+                    Console.WriteLine("No hay préstamos pendientes en este momento");
                 }
                 foreach (object p in activos)
                 {
@@ -146,30 +151,32 @@ while (!salir)
                 break;
 
             case "9":
-                Console.Write("Código del libro a eliminar: ");
-                string codDel = Console.ReadLine();
+                Console.WriteLine("\nEliminar libro ---");
+                Console.Write("Ingresa el código del libro que deseas retirar: ");
+                string codDel = Console.ReadLine() ?? "";
+
                 biblioteca.EliminarLibro(codDel);
-                Console.WriteLine("\n[Éxito] Libro eliminado correctamente.");
+                Console.WriteLine("\nEl libro fue retirado del sistema correctamente.");
                 break;
 
             case "10":
                 salir = true;
-                Console.WriteLine("\nSaliendo del programa...");
+                Console.WriteLine("\n saliendo........");
                 break;
 
             default:
-                Console.WriteLine("\n[Opción inválida] Por favor, ingrese un número del 1 al 10.");
+                Console.WriteLine("\nEsa opción no existe en el menú. Por favor, elige un número del 1 al 10.");
                 break;
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine("\n[Error Controlado]: " + ex.Message);
+        Console.WriteLine("\nOcurrió un detalle al procesar la solicitud: " + ex.Message);
     }
 
     if (!salir)
     {
-        Console.WriteLine("\nPresione cualquier tecla para continuar...");
+        Console.WriteLine("\nPresiona cualquier tecla para regresar al menú...");
         Console.ReadKey();
     }
 }
