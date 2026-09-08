@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq; // Agregado para usar .ToList()
 using SistemaBiblioteca;
 
 Biblioteca biblioteca = new Biblioteca();
@@ -10,7 +10,7 @@ while (!salir)
 {
     Console.Clear();
     Console.WriteLine("========================================");
-    Console.WriteLine("  Gestión de Biblioteca        ");
+    Console.WriteLine("  Gestión de la  Biblioteca        ");
     Console.WriteLine("========================================");
     Console.WriteLine("1. Registrar un nuevo libro");
     Console.WriteLine("2. Registrar un nuevo usuario");
@@ -23,7 +23,7 @@ while (!salir)
     Console.WriteLine("9. Eliminar un libro");
     Console.WriteLine("10. Salir del sistema");
     Console.WriteLine("========================================");
-    Console.Write("¿ingrese la opcion? (1-10): ");
+    Console.Write("¿Ingrese la opción? (1-10): ");
 
     string opcion = Console.ReadLine() ?? "";
 
@@ -32,7 +32,7 @@ while (!salir)
         switch (opcion)
         {
             case "1":
-                Console.WriteLine("\n Agregar un nuevo libro ---");
+                Console.WriteLine("\n--- Agregar un nuevo libro ---");
                 Console.Write("¿Cuál es el título?: ");
                 string titulo = Console.ReadLine() ?? "";
                 Console.Write("¿Quién es el autor?: ");
@@ -43,11 +43,11 @@ while (!salir)
                 string codigo = Console.ReadLine() ?? "";
 
                 biblioteca.RegistrarLibro(titulo, autor, categoria, codigo);
-                Console.WriteLine("\n El libro se guardó correctamente.");
+                Console.WriteLine("\nEl libro se guardó correctamente.");
                 break;
 
             case "2":
-                Console.WriteLine("\n Registrar nuevo usuario ---");
+                Console.WriteLine("\n--- Registrar nuevo usuario ---");
                 Console.Write("Ingresa su número de ID: ");
                 string id = Console.ReadLine() ?? "";
                 Console.Write("Nombre completo: ");
@@ -60,61 +60,65 @@ while (!salir)
                 break;
 
             case "3":
-                List<Libro> ordenados = new List<Libro>();
-                foreach (Libro l in biblioteca.OrdenarLibrosPorTitulo())
-                {
-                    ordenados.Add(l);
-                }
-                Console.WriteLine("\n Catálogo de libros ---");
+                // LINQ: .ToList() 
+                var ordenados = biblioteca.OrdenarLibrosPorTitulo().ToList();
+                Console.WriteLine("\n--- Catálogo de libros ---");
+                
                 if (ordenados.Count == 0)
                 {
                     Console.WriteLine("Aún no tenemos libros registrados en el catálogo.");
                 }
-                foreach (Libro l in ordenados)
+                else
                 {
-                    string estado = l.Disponible ? "Disponible" : "Prestado";
-                    Console.WriteLine($"- [{l.Codigo}] \"{l.Titulo}\" de {l.Autor} | Estado: {estado}");
+                    foreach (var l in ordenados)
+                    {
+                        string estado = l.Disponible ? "Disponible" : "Prestado";
+                        Console.WriteLine($"- [{l.Codigo}] \"{l.Titulo}\" de {l.Autor} | Estado: {estado}");
+                    }
                 }
                 break;
 
             case "4":
                 Console.Write("\n¿Qué autor o categoría estás buscando?: ");
                 string filtro = Console.ReadLine() ?? "";
-                List<Libro> resultados = new List<Libro>();
-                foreach (Libro l in biblioteca.buscarLibros(filtro))
-                {
-                    resultados.Add(l);
-                }
-                Console.WriteLine($"\n Resultados para '{filtro}' ---");
+                
+                // LINQ: .ToList() directo
+                var resultados = biblioteca.buscarLibros(filtro).ToList();
+                Console.WriteLine($"\n--- Resultados para '{filtro}' ---");
+                
                 if (resultados.Count == 0)
                 {
                     Console.WriteLine("No encontramos ningún libro que coincida con tu búsqueda.");
                 }
-                foreach (Libro l in resultados)
+                else
                 {
-                    Console.WriteLine($"- [{l.Codigo}] \"{l.Titulo}\" ({l.Autor}) - Categoría: {l.Categoria}");
+                    foreach (var l in resultados)
+                    {
+                        Console.WriteLine($"- [{l.Codigo}] \"{l.Titulo}\" ({l.Autor}) - Categoría: {l.Categoria}");
+                    }
                 }
                 break;
 
             case "5":
-                List<Libro> disponibles = new List<Libro>();
-                foreach (Libro l in biblioteca.obtenerLibrosDisponibles())
-                {
-                    disponibles.Add(l);
-                }
-                Console.WriteLine("\n Libros listos para prestar ---");
+                // LINQ: .ToList()
+                var disponibles = biblioteca.obtenerLibrosDisponibles().ToList();
+                Console.WriteLine("\n--- Libros listos para prestar ---");
+                
                 if (disponibles.Count == 0)
                 {
                     Console.WriteLine("En este momento no hay ningún libro disponible.");
                 }
-                foreach (Libro l in disponibles)
+                else
                 {
-                    Console.WriteLine($"- [{l.Codigo}] {l.Titulo}");
+                    foreach (var l in disponibles)
+                    {
+                        Console.WriteLine($"- [{l.Codigo}] {l.Titulo}");
+                    }
                 }
                 break;
 
             case "6":
-                Console.WriteLine("\n Generar préstamo ---");
+                Console.WriteLine("\n--- Generar préstamo ---");
                 Console.Write("Código del libro a prestar: ");
                 string codLibro = Console.ReadLine() ?? "";
                 Console.Write("ID del usuario que lo solicita: ");
@@ -125,7 +129,7 @@ while (!salir)
                 break;
 
             case "7":
-                Console.WriteLine("\n Devolución de libro ---");
+                Console.WriteLine("\n--- Devolución de libro ---");
                 Console.Write("Ingresa el código del libro que están devolviendo: ");
                 string codDev = Console.ReadLine() ?? "";
 
@@ -134,24 +138,25 @@ while (!salir)
                 break;
 
             case "8":
-                List<object> activos = new List<object>();
-                foreach (object p in biblioteca.ObtenerPrestamosActivos())
-                {
-                    activos.Add(p);
-                }
-                Console.WriteLine("\n Préstamos que están en curso ---");
+                // LINQ: .ToList() 
+                var activos = biblioteca.ObtenerPrestamosActivos().ToList();
+                Console.WriteLine("\n--- Préstamos que están en curso ---");
+                
                 if (activos.Count == 0)
                 {
-                    Console.WriteLine("No hay préstamos pendientes en este momento");
+                    Console.WriteLine("No hay préstamos pendientes en este momento.");
                 }
-                foreach (object p in activos)
+                else
                 {
-                    Console.WriteLine(p);
+                    foreach (var p in activos)
+                    {
+                        Console.WriteLine(p);
+                    }
                 }
                 break;
 
             case "9":
-                Console.WriteLine("\nEliminar libro ---");
+                Console.WriteLine("\n--- Eliminar libro ---");
                 Console.Write("Ingresa el código del libro que deseas retirar: ");
                 string codDel = Console.ReadLine() ?? "";
 
@@ -161,7 +166,7 @@ while (!salir)
 
             case "10":
                 salir = true;
-                Console.WriteLine("\n saliendo........");
+                Console.WriteLine("\nSaliendo del sistema...");
                 break;
 
             default:

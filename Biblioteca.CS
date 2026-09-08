@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SistemaBiblioteca
 {
@@ -8,20 +9,13 @@ namespace SistemaBiblioteca
         private List<Libro> libros = new List<Libro>();
         private List<Usuario> usuarios = new List<Usuario>();
         private List<Prestamo> prestamos = new List<Prestamo>();
-//libros
+
+ 
+        // LIBROS
         public void RegistrarLibro(string titulo, string autor, string categoria, string codigo)
         {
-            bool existe = false;
-            foreach (var l in libros) 
-            {
-                if (l.Codigo == codigo) 
-                {
-                    existe = true;
-                    break;
-                }
-            }
-
-            if (existe) 
+            // LINQ: Any para verificar duplicados
+            if (libros.Any(l => l.Codigo == codigo))
             {
                 throw new InvalidOperationException($"el libro con codigo '{codigo}' ya esta registrado");
             }
@@ -32,50 +26,27 @@ namespace SistemaBiblioteca
 
         public IEnumerable<Libro> obtenerLibrosDisponibles()
         {
-            List<Libro> disponibles = new List<Libro>();
-            foreach (var lib in libros) 
-            {
-                if (lib.Disponible) 
-                {
-                    disponibles.Add(lib);
-                }
-            }
-            return disponibles;
+            // LINQ: Where para filtrar solo los disponibles
+            return libros.Where(lib => lib.Disponible);
         }
 
         public IEnumerable<Libro> buscarLibros(string filtro)
         {
-            List<Libro> resultado = new List<Libro>();
-            foreach (var lib in libros) 
-            {
-                if (lib.Autor.Contains(filtro, StringComparison.OrdinalIgnoreCase) || 
-                    lib.Categoria.Contains(filtro, StringComparison.OrdinalIgnoreCase)) 
-                {
-                    resultado.Add(lib);
-                }
-            }
-            return resultado;
+            // LINQ: Where para filtrar por Autor o Categoría
+            return libros.Where(lib => lib.Autor.Contains(filtro, StringComparison.OrdinalIgnoreCase) || 
+                                       lib.Categoria.Contains(filtro, StringComparison.OrdinalIgnoreCase));
         }
 
         public IEnumerable<Libro> OrdenarLibrosPorTitulo()
         {
-            List<Libro> listaOrdenada = new List<Libro>(libros);
-            listaOrdenada.Sort((l1, l2) => string.Compare(l1.Titulo, l2.Titulo, StringComparison.OrdinalIgnoreCase));
-            return listaOrdenada;
+            // LINQ: OrderBy para ordenar alfabéticamente
+            return libros.OrderBy(l => l.Titulo);
         }
 
         public Libro BuscarLibroCodigo(string codigo)
         {
-            // El '?' le indica al compilador que la variable acepta null de forma segura
-            Libro? libroencontrado = null;
-            foreach (var lib in libros) 
-            {
-                if (lib.Codigo == codigo) 
-                {
-                    libroencontrado = lib;
-                    break;
-                }
-            }
+            // LINQ: FirstOrDefault para buscar por código único
+            Libro? libroencontrado = libros.FirstOrDefault(lib => lib.Codigo == codigo);
 
             if (libroencontrado == null)
             {
@@ -90,20 +61,13 @@ namespace SistemaBiblioteca
             Libro libroEliminar = BuscarLibroCodigo(codigo);
             libros.Remove(libroEliminar);
         }
-        // usuarios
+
+        // USUARIOS
+        
         public void RegistrarUsuario(string id, string nombre, string correo)
         {
-            bool existe = false;
-            foreach (var usu in usuarios) 
-            {
-                if (usu.Id == id) 
-                {
-                    existe = true;
-                    break;
-                }
-            }
-
-            if (existe) 
+            // LINQ: Any para verificar ID duplicado
+            if (usuarios.Any(usu => usu.Id == id))
             {
                 throw new InvalidOperationException($"el usuario con id '{id}' ya esta registrado");
             }
@@ -119,16 +83,8 @@ namespace SistemaBiblioteca
 
         public Usuario BuscarUsuario(string id)
         {
-            // El '?' permite asignar null sin que genere la advertencia CS8600
-            Usuario? usuarioEncontrado = null;
-            foreach (var usu in usuarios) 
-            {
-                if (usu.Id == id) 
-                {
-                    usuarioEncontrado = usu;
-                    break;
-                }
-            }
+            // LINQ: FirstOrDefault para buscar usuario por ID
+            Usuario? usuarioEncontrado = usuarios.FirstOrDefault(usu => usu.Id == id);
 
             if (usuarioEncontrado == null)
             {
@@ -138,8 +94,7 @@ namespace SistemaBiblioteca
             return usuarioEncontrado;
         }
 
-        // ==========================================
-        // pretamos
+        // PRÉSTAMOS
         public void RegistrarPrestamo(string codigoLibro, string idUsuario)
         {
             Libro libro = BuscarLibroCodigo(codigoLibro);
@@ -152,16 +107,8 @@ namespace SistemaBiblioteca
 
         public void RegistrarDevolucion(string codigoLibro)
         {
-            // El '?' remueve la advertencia del compilador de .NET 10
-            Prestamo? prestamoActivo = null;
-            foreach (var p in prestamos)
-            {
-                if (p.CodigoLibro == codigoLibro)
-                {
-                    prestamoActivo = p;
-                    break;
-                }
-            }
+            // LINQ: FirstOrDefault para encontrar el préstamo activo
+            Prestamo? prestamoActivo = prestamos.FirstOrDefault(p => p.CodigoLibro == codigoLibro);
 
             if (prestamoActivo == null)
             {
@@ -176,17 +123,13 @@ namespace SistemaBiblioteca
 
         public IEnumerable<object> ObtenerPrestamosActivos()
         {
-            List<object> resultado = new List<object>();
-            foreach (var p in prestamos)
-            {
-                resultado.Add(new 
-                { 
-                    Codigo = p.CodigoLibro, 
-                    Usuario = p.IdUsuario, 
-                    Fecha = p.FechaPrestamo.ToString("dd/MM/yyyy HH:mm") 
-                });
-            }
-            return resultado;
+            // LINQ: Select para mostrar lista de préstamos activos con detalles
+            return prestamos.Select(p => new 
+            { 
+                Codigo = p.CodigoLibro, 
+                Usuario = p.IdUsuario, 
+                Fecha = p.FechaPrestamo.ToString("dd/MM/yyyy HH:mm") 
+            });
         }
     }
 }
